@@ -61,8 +61,8 @@
     "test:coverage": "bun vitest run --coverage",
     "start": "node dist/cli/main.js start",
     "chat": "node dist/cli/main.js chat",
-    "console:build": "cd src/gateway/console-ui && bun run build",
-    "console:dev": "cd src/gateway/console-ui && bun run dev",
+    "console:build": "cd src/gateway/console-ui && pnpm run build",
+    "console:dev": "cd src/gateway/console-ui && pnpm run dev",
     "prepublishOnly": "pnpm build && pnpm check && pnpm test",
     "publish:npm": "node scripts/publish-npm.mjs"
   },
