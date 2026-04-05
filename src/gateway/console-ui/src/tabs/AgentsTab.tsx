@@ -275,7 +275,7 @@ export function AgentsTab({
   if (Array.isArray(config?.agents)) {
     for (const a of config.agents) agentConfigs[a.id] = a;
   } else if (config?.agents && typeof config.agents === 'object') {
-    for (const [id, cfg] of Object.entries(config.agents)) agentConfigs[id] = { id, ...cfg };
+    for (const [id, cfg] of Object.entries(config.agents)) agentConfigs[id] = { ...cfg, id };
   }
 
   // Session counts per agent

@@ -11,13 +11,15 @@ const variantMap: Record<string, string> = {
 
 interface Props {
   variant?: keyof typeof variantMap;
+  color?: keyof typeof variantMap;
   children: ReactNode;
 }
 
-export function Badge({ variant = 'gray', children }: Props) {
+export function Badge({ variant, color, children }: Props) {
+  const v = variant ?? color ?? 'gray';
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variantMap[variant]}`}
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variantMap[v]}`}
     >
       {children}
     </span>

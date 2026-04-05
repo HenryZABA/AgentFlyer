@@ -5,7 +5,7 @@ import { CopyButton } from '../components/CopyButton.js';
 import { DeliverableModal } from '../components/DeliverableModal.js';
 import { useLocale } from '../context/i18n.js';
 import { MarkdownView } from '../components/MarkdownView.js';
-import { rpc, useQuery } from '../hooks/useRpc.js';
+import { rpc, useQuery, getGatewayConnection } from '../hooks/useRpc.js';
 import { createConsoleThreadKey } from '../thread-keys.js';
 import type { ChatRecoveryContext } from '../types.js';
 import type {
@@ -880,7 +880,7 @@ function getRecoveryInputPlaceholder(
 function getRecoverySuggestedMessage(
   recoveryContext: ChatRecoveryContext,
   messages: Message[],
-  t: (key: string) => string,
+  t: (key: string, vars?: Record<string, string | number>) => string,
 ): string {
   const { userContext, assistantContext, toolContext, toolInputContext, toolResultContext, errorFragment } =
     getRecoveryEvidenceContext(messages);
@@ -1694,7 +1694,7 @@ function AgentPanel({ agent, agents, initialThreadKey, recoveryContext, hubFocus
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="red">{formatErrorCode(visibleRecoveryContext?.errorCode)}</Badge>
+                      <Badge variant="red">{formatErrorCode(visibleRecoveryContext?.errorCode ?? '')}</Badge>
                       <span className="text-sm font-medium text-amber-100">
                         {visibleRecoveryContext?.mode === 'new_thread'
                           ? t('chat.recovery.newThreadTitle')
@@ -2016,14 +2016,13 @@ export function ChatTab({
   // Persist the selection so explicit clicks are remembered after refetch
   useEffect(() => {
     if (!activeAgentId && agents.length > 0) {
-      setActiveAgentId(agents[0]?.agentId);
+      setActiveAgentId(agents[0]?.agentId ?? '');
     }
   }, [agents, activeAgentId]);
 
   useEffect(() => {
-    const token = window.__AF_TOKEN__;
-    const port = window.__AF_PORT__;
-    const es = new EventSource(`http://127.0.0.1:${port}/api/inbox?token=${token}`);
+    const { url, token } = getGatewayConnection();
+    const es = new EventSource(`${url}/api/inbox?token=${token}`);
     es.onmessage = (event: MessageEvent<string>) => {
       try {
         const data = JSON.parse(event.data) as InboxEvent;

@@ -36,6 +36,8 @@ export interface GatewayStatus {
   version: string;
   uptime: number;
   agents: number;
+  activeAgents?: number;
+  runningTasks?: number;
 }
 
 export interface AgentListResult {
@@ -159,6 +161,7 @@ export interface SessionMetaInfo {
   createdAt: number;
   contextTokensEstimate: number;
   compactionCount: number;
+  totalTokens?: number;
   error?: string;
   errorCode?: string;
 }

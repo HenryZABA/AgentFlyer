@@ -103,7 +103,7 @@ export function WorkflowRunPanel({
       });
       setRunId(result.runId);
       setRun(null);
-      setActiveRunRef({ runId: result.runId, workflowDef: workflow });
+      setActiveRunRef({ runId: result.runId, workflowDef: workflow, run: { status: 'running', stepResults: [] } });
     } catch (e) {
       toast(`Failed to start: ${e instanceof Error ? e.message : String(e)}`, 'error');
     }
@@ -166,7 +166,7 @@ export function WorkflowRunPanel({
           return (
             <div key={s.id} className="flex items-center gap-1.5 shrink-0">
               <div className={`rounded-lg px-3 py-1.5 text-xs font-medium ring-1 ${color}`}>
-                {s.label ?? agentName(s.agentId)}
+                {s.label ?? agentName(s.agentId ?? '')}
               </div>
               {i < workflow.steps.length - 1 && <span className="text-slate-600">→</span>}
             </div>

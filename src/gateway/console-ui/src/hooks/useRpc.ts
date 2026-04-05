@@ -1,18 +1,44 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const BASE = `http://127.0.0.1:${window.__AF_PORT__}`;
-const TOKEN = window.__AF_TOKEN__;
+const STORAGE_KEY_URL = 'af-gateway-url';
+const STORAGE_KEY_TOKEN = 'af-gateway-token';
+
+function getGatewayUrl(): string {
+  return (
+    (typeof window !== 'undefined' && window.__AF_PORT__
+      ? `http://127.0.0.1:${window.__AF_PORT__}`
+      : null) ??
+    localStorage.getItem(STORAGE_KEY_URL) ??
+    `${window.location.origin}`
+  );
+}
+
+function getToken(): string {
+  if (typeof window !== 'undefined' && window.__AF_TOKEN__) {
+    return window.__AF_TOKEN__;
+  }
+  return localStorage.getItem(STORAGE_KEY_TOKEN) ?? '';
+}
+
+export function setGatewayConnection(url: string, token: string): void {
+  localStorage.setItem(STORAGE_KEY_URL, url);
+  localStorage.setItem(STORAGE_KEY_TOKEN, token);
+}
+
+export function getGatewayConnection(): { url: string; token: string } {
+  return { url: getGatewayUrl(), token: getToken() };
+}
 
 export async function rpc<T = unknown>(
   method: string,
   params?: unknown,
   signal?: AbortSignal,
 ): Promise<T> {
-  const res = await fetch(`${BASE}/rpc`, {
+  const res = await fetch(`${getGatewayUrl()}/rpc`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ id: 1, method, params }),
     signal,

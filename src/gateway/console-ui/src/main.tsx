@@ -7,7 +7,7 @@ if (!root) throw new Error('Missing #root element');
 
 createRoot(root).render(<App />);
 
-// Dismiss the server-rendered splash screen once React has painted
+// Dismiss the splash screen once React has painted
 requestAnimationFrame(() => {
   requestAnimationFrame(() => {
     const splash = document.getElementById('af-splash');

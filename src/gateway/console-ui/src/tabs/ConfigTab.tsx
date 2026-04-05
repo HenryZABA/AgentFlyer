@@ -480,7 +480,8 @@ interface AgentModalState {
 interface SearchModalState {
   mode: 'add' | 'edit';
   index?: number;
-  draft: SearchProvider;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  draft: any;
 }
 
 interface PeerModalState {
@@ -1552,7 +1553,7 @@ function ModelsPanel({
                 {hasApiKey && (
                   <span className="text-xs text-slate-500 font-mono shrink-0">
                     {group.apiKey?.slice(0, 6)}
-                    {'\u2022'.repeat(Math.min(8, Math.max(0, group.apiKey?.length - 6)))}
+                    {'\u2022'.repeat(Math.min(8, Math.max(0, (group.apiKey?.length ?? 0) - 6)))}
                   </span>
                 )}
                 {hasBaseUrl && (
@@ -1737,7 +1738,7 @@ function AgentsPanel({
   );
 }
 
-function DefaultsPanel({ cfg, onChange }: Pick<PanelProps, 'cfg' | 'onChange'>) {
+function DefaultsPanel({ cfg, onChange, modelKeys: _modelKeys }: Pick<PanelProps, 'cfg' | 'onChange' | 'modelKeys'>) {
   return (
     <PanelSection
       title="Defaults"

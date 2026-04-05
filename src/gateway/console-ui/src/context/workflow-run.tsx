@@ -18,11 +18,14 @@ import type { WorkflowDef } from '../types.js';
 export interface ActiveRunRef {
   runId: string;
   workflowDef: WorkflowDef;
+  run: { status: string; stepResults: unknown[] };
 }
 
 export interface WorkflowRunCtxValue {
   activeRunRef: ActiveRunRef | null;
+  activeRun: ActiveRunRef | null;
   setActiveRunRef: Dispatch<SetStateAction<ActiveRunRef | null>>;
+  cancel: () => void;
 }
 
 export const WorkflowRunContext = createContext<WorkflowRunCtxValue | null>(null);
@@ -36,8 +39,10 @@ export function useWorkflowRun(): WorkflowRunCtxValue {
 export function WorkflowRunProvider({ children }: { children: ReactNode }) {
   const [activeRunRef, setActiveRunRef] = useState<ActiveRunRef | null>(null);
 
+  const cancel = () => setActiveRunRef(null);
+
   return (
-    <WorkflowRunContext.Provider value={{ activeRunRef, setActiveRunRef }}>
+    <WorkflowRunContext.Provider value={{ activeRunRef, activeRun: activeRunRef, setActiveRunRef, cancel }}>
       {children}
     </WorkflowRunContext.Provider>
   );
