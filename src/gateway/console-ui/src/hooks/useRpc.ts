@@ -4,13 +4,10 @@ const STORAGE_KEY_URL = 'af-gateway-url';
 const STORAGE_KEY_TOKEN = 'af-gateway-token';
 
 function getGatewayUrl(): string {
-  return (
-    (typeof window !== 'undefined' && window.__AF_PORT__
-      ? `http://127.0.0.1:${window.__AF_PORT__}`
-      : null) ??
-    localStorage.getItem(STORAGE_KEY_URL) ??
-    `${window.location.origin}`
-  );
+  if (typeof window !== 'undefined' && window.__AF_PORT__) {
+    return `http://127.0.0.1:${window.__AF_PORT__}`;
+  }
+  return localStorage.getItem(STORAGE_KEY_URL) ?? '';
 }
 
 function getToken(): string {
@@ -20,9 +17,18 @@ function getToken(): string {
   return localStorage.getItem(STORAGE_KEY_TOKEN) ?? '';
 }
 
+export function isGatewayConfigured(): boolean {
+  return getGatewayUrl() !== '';
+}
+
 export function setGatewayConnection(url: string, token: string): void {
-  localStorage.setItem(STORAGE_KEY_URL, url);
+  localStorage.setItem(STORAGE_KEY_URL, url.replace(/\/+$/, ''));
   localStorage.setItem(STORAGE_KEY_TOKEN, token);
+}
+
+export function clearGatewayConnection(): void {
+  localStorage.removeItem(STORAGE_KEY_URL);
+  localStorage.removeItem(STORAGE_KEY_TOKEN);
 }
 
 export function getGatewayConnection(): { url: string; token: string } {

@@ -1,9 +1,10 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
+import { ConnectGateway } from './components/ConnectGateway.js';
 import { Sidebar } from './components/Sidebar.js';
 import { Toast } from './components/Toast.js';
 import { LocaleProvider } from './context/i18n.js';
 import { WorkflowRunProvider } from './context/workflow-run.js';
-import { rpc } from './hooks/useRpc.js';
+import { rpc, isGatewayConfigured, clearGatewayConnection } from './hooks/useRpc.js';
 import { ToastContext, useToastState } from './hooks/useToast.js';
 import { SetupWizard } from './tabs/SetupWizard.js';
 import type { ChatRecoveryContext, ChatRecoveryMode } from './types.js';
@@ -78,6 +79,7 @@ function Spinner() {
 }
 
 export function App() {
+  const [connected, setConnected] = useState(isGatewayConfigured());
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [sessionsAgentFilter, setSessionsAgentFilter] = useState('all');
   const [sessionsErrorCodeFilter, setSessionsErrorCodeFilter] = useState('all');
@@ -141,6 +143,11 @@ export function App() {
       }
     }
     setActiveTab(nextTab);
+  }
+
+  // ── Gateway connection gate ────────────────────────────────────────────
+  if (!connected) {
+    return <ConnectGateway onConnected={() => setConnected(true)} />;
   }
 
   return (
